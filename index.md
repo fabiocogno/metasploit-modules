@@ -7,8 +7,7 @@ This repo contains a collection of [Metasploit](https://www.metasploit.com/) mod
 # Included modules
 
 * [Total.js Directory Traversal (CVE-2019-8903)](./totaljs_traversal.html)
-
-TODO
+* TODO
 
 # How to
 
