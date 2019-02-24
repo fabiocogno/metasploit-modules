@@ -3,7 +3,7 @@ layout: default
 ---
 
 # Generic HTTP Directory Traversal Utility
-This module allows you to test if a web server (or web application) is vulnerable to directory traversal with three different actions. The 'CHECK' action (default) is used to automatically (or manually) find if directory traversal exists in the web server, and then return the path that triggers the vulnerability. The 'DOWNLOAD' action shares the same ability as 'CHECK', but will take advantage of the found trigger to download files based on a 'FILELIST' of your choosing. The 'PHPSOURCE' action can be used to download source against PHP applications. The 'WRITABLE' action can be used to determine if the trigger can be used to write files outside the www directory. To use the 'COOKIE' option, set your value like so: "name=value".
+This module allows you to test if a Total.js web application is vulnerable to directory traversal with three different actions. The 'CHECK' action (default) is used to automatically find if directory traversal exists in the web server, and then return the Total.js version and application information. The 'DOWNLOAD' action shares the same ability as 'CHECK', but will take advantage of the found trigger to download a file of your choosing. The 'READ' action can be used to read a file of your choosing  directly from the console.
 
 # Module Name
 
