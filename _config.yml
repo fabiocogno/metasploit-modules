@@ -1,5 +1,5 @@
 title: Metasploit modules
 description: Collection of Metasploit modules
-show_downloads: false
+show_downloads: true
 google_analytics:
 theme: jekyll-theme-cayman

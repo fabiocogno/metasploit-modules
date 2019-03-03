@@ -3,7 +3,7 @@ layout: default
 ---
 
 # Generic HTTP Directory Traversal Utility
-This module allows you to test if a Total.js web application is vulnerable to directory traversal with three different actions. The 'CHECK' action (default) is used to automatically find if directory traversal exists in the web server, and then return the Total.js version and application information. The 'DOWNLOAD' action shares the same ability as 'CHECK', but will take advantage of the found trigger to download a file of your choosing. The 'READ' action can be used to read a file of your choosing  directly from the console.
+This module allows you to test if a Total.js web application is vulnerable to directory traversal with three different actions. The 'CHECK' action (default) is used to automatically find if directory traversal exists in the web server, and then return the Total.js version and application information. The 'DOWNLOAD' action shares the same ability as 'CHECK', but will take advantage of the payload to download a file of your choosing. The 'READ' action can be used to read a file of your choosing directly from the console.
 
 # Module Name
 
@@ -14,6 +14,10 @@ auxiliary/scanner/http/totaljs_traversal
 Riccardo Krauter (Discovery)
 
 Fabio Cogno (Metasploit Module)
+
+# Disclosure date
+
+Feb 18, 2019
 
 # Actions
 
