@@ -7,6 +7,7 @@ This repo contains a collection of [Metasploit](https://www.metasploit.com/) mod
 # Included modules
 
 * Total.js <= 3.2.2 Directory Traversal (CVE-2019-8903)
+* Samsung SmartTV scanner
 
 # How to
 
@@ -19,7 +20,7 @@ git clone https://github.com/fabiocogno/metasploit-modules.git
 Copy the content to the local Metasploit directory
 
 ```
-mkdir -p ~/.msf4 && cp -r metasploit-modules/.msf4/* ~/msf4/
+mkdir -p ~/.msf4 && cp -r metasploit-modules/modules ~/.msf4/
 ```
 
 # License
