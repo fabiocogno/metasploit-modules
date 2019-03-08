@@ -13,13 +13,14 @@ class MetasploitModule < Msf::Auxiliary
 
   def initialize(info = {})
     super(update_info(info,
-      'Name' => 'Total.js <= 3.2.2 Directory Traversal',
-      'Description' => %q({
-        This module check and exploits a directory traversal vulnerability in Total.js <= 3.2.2.
+      'Name' => 'Total.js < 3.2.4 Directory Traversal',
+      'Description' => %q(
+        This module check and exploits a directory traversal vulnerability in Total.js < 3.2.4.
+
         Here is a list of accepted extensions: flac, jpg, jpeg, png, gif, ico, js, css, txt, xml,
         woff, woff2, otf, ttf, eot, svg, zip, rar, pdf, docx, xlsx, doc, xls, html, htm, appcache,
         manifest, map, ogv, ogg, mp4, mp3, webp, webm, swf, package, json, md, m4v, jsx, heif, heic
-      }),
+      ),
       'Author' =>
         [
           'Riccardo Krauter', # Discovery
@@ -30,7 +31,8 @@ class MetasploitModule < Msf::Auxiliary
         [
           ['CVE', '2019-8903'],
           ['CWE', '22'],
-          ['URL', 'https://blog.totaljs.com/blogs/news/20190213-a-critical-security-fix/']
+          ['URL', 'https://blog.totaljs.com/blogs/news/20190213-a-critical-security-fix/'],
+          ['URL', 'https://snyk.io/vuln/SNYK-JS-TOTALJS-173710']
         ],
       'Privileged' => false,
       'DisclosureDate' => 'Feb 18 2019',
